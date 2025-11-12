@@ -23,6 +23,7 @@ import { CheckpointRestoreDialog } from "./components/chat/CheckpointRestoreDial
 import { DeleteMessageDialog, EditMessageDialog } from "./components/chat/MessageModificationConfirmationDialog"
 import ErrorBoundary from "./components/ErrorBoundary"
 import { CloudView } from "./components/cloud/CloudView"
+import { ScriptReviewView } from "./components/script-review/ScriptReviewView"
 import { useAddNonInteractiveClickListener } from "./components/ui/hooks/useNonInteractiveClick"
 import { TooltipProvider } from "./components/ui/tooltip"
 import { STANDARD_TOOLTIP_DELAY } from "./components/ui/standard-tooltip"
@@ -239,6 +240,23 @@ const App = () => {
 			telemetryClient.capture(TelemetryEventName.MARKETPLACE_TAB_VIEWED)
 		}
 	}, [tab])
+
+	// Check if we're in Script Review mode BEFORE state hydration check
+	// Script Review doesn't need the normal Roo Code state
+	const isScriptReviewMode = typeof window !== "undefined" && (window as any).scriptReviewMode === true
+
+	// Debug logging
+	console.log("[Script Review Debug]", {
+		isScriptReviewMode,
+		windowDefined: typeof window !== "undefined",
+		scriptReviewModeValue: (window as any).scriptReviewMode,
+	})
+
+	// If in Script Review mode, render only the ScriptReviewView
+	if (isScriptReviewMode) {
+		console.log("[Script Review] Rendering ScriptReviewView")
+		return <ScriptReviewView />
+	}
 
 	if (!didHydrateState) {
 		return null

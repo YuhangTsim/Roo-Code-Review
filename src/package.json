@@ -116,6 +116,12 @@
 				"category": "%configuration.title%"
 			},
 			{
+				"command": "roo-cline.openScriptReview",
+				"title": "Open Script Review",
+				"category": "%configuration.title%",
+				"icon": "$(book)"
+			},
+			{
 				"command": "roo-cline.explainCode",
 				"title": "%command.explainCode.title%",
 				"category": "%configuration.title%"
@@ -261,6 +267,11 @@
 				{
 					"command": "roo-cline.popoutButtonClicked",
 					"group": "overflow@4",
+					"when": "view == roo-cline.SidebarProvider"
+				},
+				{
+					"command": "roo-cline.openScriptReview",
+					"group": "overflow@5",
 					"when": "view == roo-cline.SidebarProvider"
 				}
 			],
