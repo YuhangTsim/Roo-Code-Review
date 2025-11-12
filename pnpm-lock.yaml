@@ -937,8 +937,8 @@ importers:
         specifier: ^3.2.3
         version: 3.2.4(@types/debug@4.1.12)(@types/node@20.17.50)(@vitest/ui@3.2.4)(jiti@2.4.2)(jsdom@26.1.0)(lightningcss@1.30.1)(tsx@4.19.4)(yaml@2.8.0)
       zod-to-ts:
-        specifier: ^1.2.0
-        version: 1.2.0(typescript@5.8.3)(zod@3.25.61)
+        specifier: ^2.0.0
+        version: 2.0.0(typescript@5.8.3)(zod@3.25.61)
 
   webview-ui:
     dependencies:
@@ -4103,9 +4103,6 @@ packages:
 
   '@types/node@20.17.57':
     resolution: {integrity: sha512-f3T4y6VU4fVQDKVqJV4Uppy8c1p/sVvS3peyqxyWnzkqXFJLRU7Y1Bl7rMS1Qe9z0v4M6McY0Fp9yBsgHJUsWQ==}
-
-  '@types/node@20.19.23':
-    resolution: {integrity: sha512-yIdlVVVHXpmqRhtyovZAcSy0MiPcYWGkoO4CGe/+jpP0hmNuihm4XhHbADpK++MsiLHP5MVlv+bcgdF99kSiFQ==}
 
   '@types/node@24.2.1':
     resolution: {integrity: sha512-DRh5K+ka5eJic8CjH7td8QpYEV6Zo10gfRkjHCO3weqZHWDtAaSTFtl4+VMqOJ4N5jcuhZ9/l+yy8rVgw7BQeQ==}
@@ -9626,9 +9623,6 @@ packages:
   undici-types@6.19.8:
     resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
 
-  undici-types@6.21.0:
-    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
-
   undici-types@7.10.0:
     resolution: {integrity: sha512-t5Fy/nfn+14LuOc2KNYg75vZqClpAiqscVvMygNnlsHBFpSXdJaYtXMcdNLpl/Qvc3P2cB3s6lOV51nqsFq4ag==}
 
@@ -10260,11 +10254,11 @@ packages:
     peerDependencies:
       zod: ^3.24.1
 
-  zod-to-ts@1.2.0:
-    resolution: {integrity: sha512-x30XE43V+InwGpvTySRNz9kB7qFU8DlyEy7BsSTCHPH1R0QasMmHWZDCzYm6bVXtj/9NNJAZF3jW8rzFvH5OFA==}
+  zod-to-ts@2.0.0:
+    resolution: {integrity: sha512-aHsUgIl+CQutKAxtRNeZslLCLXoeuSq+j5HU7q3kvi/c2KIAo6q4YjT7/lwFfACxLB923ELHYMkHmlxiqFy4lw==}
     peerDependencies:
-      typescript: ^4.9.4 || ^5.0.2
-      zod: ^3
+      typescript: ^5.0.0
+      zod: ^3.25.0 || ^4.0.0
 
   zod-validation-error@3.4.1:
     resolution: {integrity: sha512-1KP64yqDPQ3rupxNv7oXhf7KdhHHgaqbKuspVoiN93TT0xrBjql+Svjkdjq/Qh/7GSMmgQs3AfvBT0heE35thw==}
@@ -13795,11 +13789,6 @@ snapshots:
     dependencies:
       undici-types: 6.19.8
 
-  '@types/node@20.19.23':
-    dependencies:
-      undici-types: 6.21.0
-    optional: true
-
   '@types/node@24.2.1':
     dependencies:
       undici-types: 7.10.0
@@ -13867,7 +13856,7 @@ snapshots:
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 20.19.23
+      '@types/node': 24.2.1
     optional: true
 
   '@types/yargs-parser@21.0.3': {}
@@ -20229,9 +20218,6 @@ snapshots:
 
   undici-types@6.19.8: {}
 
-  undici-types@6.21.0:
-    optional: true
-
   undici-types@7.10.0: {}
 
   undici@6.21.3: {}
@@ -21061,7 +21047,7 @@ snapshots:
     dependencies:
       zod: 3.25.76
 
-  zod-to-ts@1.2.0(typescript@5.8.3)(zod@3.25.61):
+  zod-to-ts@2.0.0(typescript@5.8.3)(zod@3.25.61):
     dependencies:
       typescript: 5.8.3
       zod: 3.25.61
