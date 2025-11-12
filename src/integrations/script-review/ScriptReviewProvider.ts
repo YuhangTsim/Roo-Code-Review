@@ -100,7 +100,7 @@ export class ScriptReviewProvider {
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}' ${webview.cspSource}; font-src ${webview.cspSource}; img-src ${webview.cspSource} https: data:;">
+	<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}' ${webview.cspSource}; font-src ${webview.cspSource} data:; img-src ${webview.cspSource} https: data:;">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="${styleUri}" rel="stylesheet">
 	<title>Script Review</title>
@@ -108,8 +108,8 @@ export class ScriptReviewProvider {
 <body>
 	<div id="root" data-vscode-context='{"preventDefaultContextMenuItems": true}'></div>
 	<script nonce="${nonce}">
-		// Initialize global state for webview
-		window.vscodeApi = acquireVsCodeApi();
+		// Set Script Review mode flag BEFORE the main app loads
+		// Do NOT call acquireVsCodeApi() here - let the VSCodeAPIWrapper singleton handle it
 		window.scriptReviewMode = true;
 	</script>
 	<script nonce="${nonce}" type="module" src="${scriptUri}"></script>

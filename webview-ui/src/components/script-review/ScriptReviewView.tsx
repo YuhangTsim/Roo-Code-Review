@@ -7,10 +7,8 @@ import React, { useState, useEffect, useCallback } from "react"
 import { ScriptPanel } from "./ScriptPanel"
 import { ReviewPanel } from "./ReviewPanel"
 import { SplitPane } from "./SplitPane"
+import { vscode } from "../../utils/vscode"
 import type { ScriptPart, Review, ScriptReviewState } from "./types"
-
-// VS Code API
-declare const vscodeApi: any
 
 export const ScriptReviewView: React.FC = () => {
 	console.log("[ScriptReviewView] Component rendering")
@@ -82,12 +80,12 @@ export const ScriptReviewView: React.FC = () => {
 
 	// Request initial state on mount
 	useEffect(() => {
-		vscodeApi.postMessage({ type: "getState" })
+		vscode.postMessage({ type: "getState" } as any)
 	}, [])
 
 	// Send message to extension
 	const sendMessage = useCallback((message: any) => {
-		vscodeApi.postMessage(message)
+		vscode.postMessage(message)
 	}, [])
 
 	// Handle script part updates
