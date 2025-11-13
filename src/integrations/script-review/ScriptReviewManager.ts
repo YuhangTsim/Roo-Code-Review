@@ -66,6 +66,9 @@ export class ScriptReviewManager {
 				case "loadFromFile":
 					return await this.loadFromFile(message.filePath)
 
+				case "loadFromActiveEditor":
+					return await this.loadFromActiveEditor()
+
 				case "generateReview":
 					return await this.generateReview(message.partId, message.useAI)
 
@@ -259,8 +262,11 @@ export class ScriptReviewManager {
 					script = await ScriptReviewFileIO.loadFromJSON(filePath)
 				} else if (ext.endsWith(".md")) {
 					script = await ScriptReviewFileIO.loadFromMarkdown(filePath)
+				} else if (ext.endsWith(".ipynb")) {
+					script = await ScriptReviewFileIO.loadFromNotebook(filePath)
 				} else {
-					return { type: "error", message: `Unsupported file type: ${filePath}` }
+					// Try to load as code file
+					script = await ScriptReviewFileIO.loadFromCodeFile(filePath)
 				}
 			} else {
 				script = await ScriptReviewFileIO.openScript()
@@ -268,6 +274,23 @@ export class ScriptReviewManager {
 
 			if (!script) {
 				return { type: "error", message: "No script selected" }
+			}
+
+			return await this.loadScript(script)
+		} catch (error) {
+			return { type: "error", message: String(error) }
+		}
+	}
+
+	/**
+	 * Load script from active editor
+	 */
+	private async loadFromActiveEditor(): Promise<ScriptReviewResponse> {
+		try {
+			const script = await ScriptReviewFileIO.loadFromActiveEditor()
+
+			if (!script) {
+				return { type: "error", message: "No active editor or failed to load" }
 			}
 
 			return await this.loadScript(script)

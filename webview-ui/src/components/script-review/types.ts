@@ -7,6 +7,7 @@ export interface ScriptPart {
 	id: string
 	title: string
 	content: string
+	language?: string // Programming language for syntax highlighting
 	order: number
 	collapsed?: boolean
 	createdAt: string
@@ -27,6 +28,7 @@ export interface Script {
 	id: string
 	title: string
 	description?: string
+	language?: string // Overall language if all parts are same language
 	parts: ScriptPart[]
 	reviews: Review[]
 	createdAt: string

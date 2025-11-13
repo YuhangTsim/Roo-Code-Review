@@ -6,6 +6,7 @@ export interface ScriptPart {
 	id: string
 	title: string
 	content: string
+	language?: string // Programming language for syntax highlighting (e.g., 'javascript', 'python', 'typescript')
 	order: number
 	collapsed?: boolean
 	createdAt: string
@@ -26,6 +27,7 @@ export interface Script {
 	id: string
 	title: string
 	description?: string
+	language?: string // Overall language if all parts are same language
 	parts: ScriptPart[]
 	reviews: Review[]
 	createdAt: string
@@ -55,7 +57,8 @@ export type ScriptReviewMessage =
 	| { type: "deleteScriptPart"; partId: string }
 	| { type: "saveScript" }
 	| { type: "exportScript"; format: "json" | "markdown" | "pdf" }
-	| { type: "loadFromFile"; filePath: string }
+	| { type: "loadFromFile"; filePath?: string }
+	| { type: "loadFromActiveEditor" }
 	| { type: "generateReview"; partId: string; useAI: boolean }
 	| { type: "restoreVersion"; versionId: string }
 	| { type: "togglePartCollapse"; partId: string }

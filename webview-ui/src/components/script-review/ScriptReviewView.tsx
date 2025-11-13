@@ -161,6 +161,11 @@ export const ScriptReviewView: React.FC = () => {
 		sendMessage({ type: "loadFromFile" })
 	}, [sendMessage])
 
+	// Handle load from active editor
+	const handleLoadFromEditor = useCallback(() => {
+		sendMessage({ type: "loadFromActiveEditor" })
+	}, [sendMessage])
+
 	// Handle generate AI review
 	const handleGenerateReview = useCallback(
 		(partId: string) => {
@@ -184,11 +189,18 @@ export const ScriptReviewView: React.FC = () => {
 				<div className="text-center p-8 border border-vscode-panel-border rounded">
 					<h2 className="text-xl mb-4">Script Review</h2>
 					<p className="text-lg mb-4">No script loaded</p>
-					<button
-						onClick={handleLoadFile}
-						className="px-4 py-2 bg-vscode-button-background text-vscode-button-foreground hover:bg-vscode-button-hoverBackground rounded">
-						Load Script
-					</button>
+					<div className="flex gap-3 justify-center">
+						<button
+							onClick={handleLoadFromEditor}
+							className="px-4 py-2 bg-vscode-button-background text-vscode-button-foreground hover:bg-vscode-button-hoverBackground rounded">
+							Load from Editor
+						</button>
+						<button
+							onClick={handleLoadFile}
+							className="px-4 py-2 bg-vscode-button-background text-vscode-button-foreground hover:bg-vscode-button-hoverBackground rounded">
+							Load from File
+						</button>
+					</div>
 				</div>
 			</div>
 		)
@@ -202,6 +214,11 @@ export const ScriptReviewView: React.FC = () => {
 			<div className="flex items-center justify-between px-4 py-2 border-b border-vscode-panel-border bg-vscode-sideBar-background">
 				<div className="flex items-center gap-2">
 					<h1 className="text-lg font-semibold">{state.currentScript.title}</h1>
+					{state.currentScript.language && (
+						<span className="text-xs px-2 py-0.5 rounded bg-vscode-badge-background text-vscode-badge-foreground">
+							{state.currentScript.language}
+						</span>
+					)}
 					{state.isModified && (
 						<span className="text-xs text-vscode-inputValidation-warningForeground">●</span>
 					)}
@@ -214,10 +231,16 @@ export const ScriptReviewView: React.FC = () => {
 						+ Add Part
 					</button>
 					<button
+						onClick={handleLoadFromEditor}
+						className="px-3 py-1 text-sm bg-vscode-button-background text-vscode-button-foreground hover:bg-vscode-button-hoverBackground rounded"
+						title="Load from active editor">
+						From Editor
+					</button>
+					<button
 						onClick={handleLoadFile}
 						className="px-3 py-1 text-sm bg-vscode-button-background text-vscode-button-foreground hover:bg-vscode-button-hoverBackground rounded"
 						title="Load from file">
-						Open
+						Open File
 					</button>
 					<button
 						onClick={handleSave}

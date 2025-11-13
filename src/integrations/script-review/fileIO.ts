@@ -7,6 +7,52 @@ import * as fs from "fs/promises"
 import * as path from "path"
 import type { Script, ScriptPart, Review } from "./types"
 
+// Language mappings for common file extensions
+const LANGUAGE_MAP: Record<string, string> = {
+	".js": "javascript",
+	".jsx": "javascript",
+	".ts": "typescript",
+	".tsx": "typescript",
+	".py": "python",
+	".rb": "ruby",
+	".java": "java",
+	".c": "c",
+	".cpp": "cpp",
+	".cc": "cpp",
+	".cxx": "cpp",
+	".cs": "csharp",
+	".go": "go",
+	".rs": "rust",
+	".php": "php",
+	".swift": "swift",
+	".kt": "kotlin",
+	".scala": "scala",
+	".sh": "bash",
+	".bash": "bash",
+	".zsh": "zsh",
+	".fish": "fish",
+	".ps1": "powershell",
+	".r": "r",
+	".m": "matlab",
+	".lua": "lua",
+	".pl": "perl",
+	".sql": "sql",
+	".html": "html",
+	".htm": "html",
+	".css": "css",
+	".scss": "scss",
+	".sass": "sass",
+	".less": "less",
+	".xml": "xml",
+	".yaml": "yaml",
+	".yml": "yaml",
+	".toml": "toml",
+	".ini": "ini",
+	".vue": "vue",
+	".svelte": "svelte",
+	".ipynb": "python", // Jupyter notebooks
+}
+
 export class ScriptReviewFileIO {
 	/**
 	 * Load a script from a JSON file
@@ -288,16 +334,221 @@ export class ScriptReviewFileIO {
 	}
 
 	/**
+	 * Detect language from file extension
+	 */
+	static detectLanguage(filePath: string): string | undefined {
+		const ext = path.extname(filePath).toLowerCase()
+		return LANGUAGE_MAP[ext]
+	}
+
+	/**
+	 * Load a Jupyter notebook as a script
+	 */
+	static async loadFromNotebook(filePath: string): Promise<Script> {
+		try {
+			const content = await fs.readFile(filePath, "utf-8")
+			const notebook = JSON.parse(content)
+			const fileName = path.basename(filePath)
+			const now = new Date().toISOString()
+
+			const parts: ScriptPart[] = []
+			const reviews: Review[] = []
+
+			// Extract code cells from notebook
+			const cells = notebook.cells || []
+			let cellIndex = 0
+
+			for (const cell of cells) {
+				if (cell.cell_type === "code" && cell.source && cell.source.length > 0) {
+					const partId = this.generateId()
+					const cellContent = Array.isArray(cell.source) ? cell.source.join("") : cell.source
+
+					parts.push({
+						id: partId,
+						title: `Cell ${cellIndex + 1}`,
+						content: cellContent,
+						language: "python",
+						order: cellIndex,
+						createdAt: now,
+						updatedAt: now,
+					})
+
+					reviews.push({
+						id: this.generateId(),
+						scriptPartId: partId,
+						summary: "",
+						implementationDetails: "",
+						comments: "",
+						createdAt: now,
+						updatedAt: now,
+					})
+
+					cellIndex++
+				}
+			}
+
+			// If no code cells found, create empty part
+			if (parts.length === 0) {
+				const partId = this.generateId()
+				parts.push({
+					id: partId,
+					title: "Empty Notebook",
+					content: "No code cells found",
+					language: "python",
+					order: 0,
+					createdAt: now,
+					updatedAt: now,
+				})
+
+				reviews.push({
+					id: this.generateId(),
+					scriptPartId: partId,
+					summary: "",
+					implementationDetails: "",
+					comments: "",
+					createdAt: now,
+					updatedAt: now,
+				})
+			}
+
+			const script: Script = {
+				id: this.generateId(),
+				title: fileName,
+				description: `Code review for Jupyter notebook: ${fileName}`,
+				language: "python",
+				parts,
+				reviews,
+				createdAt: now,
+				updatedAt: now,
+				filePath,
+			}
+
+			return script
+		} catch (error) {
+			throw new Error(`Failed to load notebook from ${filePath}: ${error}`)
+		}
+	}
+
+	/**
+	 * Load a code file as a script
+	 */
+	static async loadFromCodeFile(filePath: string): Promise<Script> {
+		try {
+			const content = await fs.readFile(filePath, "utf-8")
+			const fileName = path.basename(filePath)
+			const language = this.detectLanguage(filePath)
+			const now = new Date().toISOString()
+			const partId = this.generateId()
+
+			const script: Script = {
+				id: this.generateId(),
+				title: fileName,
+				description: `Code review for ${fileName}`,
+				language,
+				parts: [
+					{
+						id: partId,
+						title: fileName,
+						content,
+						language,
+						order: 0,
+						createdAt: now,
+						updatedAt: now,
+					},
+				],
+				reviews: [
+					{
+						id: this.generateId(),
+						scriptPartId: partId,
+						summary: "",
+						implementationDetails: "",
+						comments: "",
+						createdAt: now,
+						updatedAt: now,
+					},
+				],
+				createdAt: now,
+				updatedAt: now,
+				filePath,
+			}
+
+			return script
+		} catch (error) {
+			throw new Error(`Failed to load code file from ${filePath}: ${error}`)
+		}
+	}
+
+	/**
+	 * Load script from active editor
+	 */
+	static async loadFromActiveEditor(): Promise<Script | null> {
+		const editor = vscode.window.activeTextEditor
+		if (!editor) {
+			vscode.window.showWarningMessage("No active editor found")
+			return null
+		}
+
+		const document = editor.document
+		const content = document.getText()
+		const fileName = path.basename(document.fileName)
+		const language = document.languageId
+		const now = new Date().toISOString()
+		const partId = this.generateId()
+
+		const script: Script = {
+			id: this.generateId(),
+			title: fileName,
+			description: `Code review for ${fileName}`,
+			language,
+			parts: [
+				{
+					id: partId,
+					title: fileName,
+					content,
+					language,
+					order: 0,
+					createdAt: now,
+					updatedAt: now,
+				},
+			],
+			reviews: [
+				{
+					id: this.generateId(),
+					scriptPartId: partId,
+					summary: "",
+					implementationDetails: "",
+					comments: "",
+					createdAt: now,
+					updatedAt: now,
+				},
+			],
+			createdAt: now,
+			updatedAt: now,
+			filePath: document.fileName,
+		}
+
+		return script
+	}
+
+	/**
 	 * Open file picker and load script
 	 */
 	static async openScript(): Promise<Script | null> {
 		const uri = await vscode.window.showOpenDialog({
 			canSelectMany: false,
 			filters: {
-				"Script Files": ["json", "md"],
-				JSON: ["json"],
-				Markdown: ["md"],
 				"All Files": ["*"],
+				"Script Review Files": ["json", "md"],
+				Python: ["py", "pyw"],
+				"JavaScript/TypeScript": ["js", "jsx", "ts", "tsx"],
+				"Shell Scripts": ["sh", "bash", "zsh", "fish"],
+				Notebooks: ["ipynb"],
+				Java: ["java"],
+				"C/C++": ["c", "cpp", "cc", "cxx", "h", "hpp"],
+				Go: ["go"],
+				Rust: ["rs"],
+				PHP: ["php"],
+				Ruby: ["rb"],
 			},
 		})
 
@@ -312,8 +563,11 @@ export class ScriptReviewFileIO {
 			return await this.loadFromJSON(filePath)
 		} else if (ext === ".md") {
 			return await this.loadFromMarkdown(filePath)
+		} else if (ext === ".ipynb") {
+			return await this.loadFromNotebook(filePath)
 		} else {
-			throw new Error(`Unsupported file type: ${ext}`)
+			// Try to load as code file
+			return await this.loadFromCodeFile(filePath)
 		}
 	}
 }
